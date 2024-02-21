@@ -1,15 +1,16 @@
 let news = [];
-q = '';
-page = '';
-category = '';
+const url = "https://friendly-trifle-ee6c52.netlify.app/top-headlines";
+
 const getLatestNews = async () => {
-  const url = new URL(
-    `https://friendly-trifle-ee6c52.netlify.app/`);
-  const reponse = await fetch(url);
+  const requestUrl = new URL(url);
+  console.log('uuu', requestUrl);
+
+  const reponse = await fetch(requestUrl);
   const data = await reponse.json();
   console.log('rrr', reponse);
   news = data.articles;
-  console.log('ddd', news);
+  console.log('ddd', data);
+  console.log('nnn', news);
 };
 
 getLatestNews();
