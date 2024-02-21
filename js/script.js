@@ -1,7 +1,9 @@
+const API_KEY = `59db89f3fab8455081d13257e11ce5d2`;
+
 let news = [];
-const url = "https://friendly-trifle-ee6c52.netlify.app/top-headlines";
 
 const getLatestNews = async () => {
+  let url = new URL(`https://friendly-trifle-ee6c52.netlify.app/top-headlines?country=kr&apiKey=${API_KEY}`);
   const requestUrl = new URL(url);
   console.log('uuu', requestUrl);
 
