@@ -4,7 +4,7 @@ page = '';
 category = '';
 const getLatestNews = async () => {
   const url = new URL(
-    `http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines?q=${q}`);
+    `http://times-node-env.eba-appvq3ef.ap-northeast-2.elasticbeanstalk.com/top-headlines`);
   const reponse = await fetch(url);
   const data = await reponse.json();
   console.log('rrr', reponse);
