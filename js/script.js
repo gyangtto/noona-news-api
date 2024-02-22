@@ -100,6 +100,7 @@ const getNewsByKeyword = async () => {
     const response = await fetch(url);
     const data = await response.json();
     newsList = data.articles;
+
     render();
   } catch (error) {
     console.error('Error fetching news by keyword:', error);
@@ -113,12 +114,12 @@ const render = () => {
     <div class="row news mx-auto">
       <div class="news-img col-lg-4 col-12 mx-auto">
         <img class="img-fluid mx-auto col-12" 
-             src="${news.urlToImage}" 
-             onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU';" 
-             alt="뉴스 img">
+          src="${news.urlToImage}" 
+          onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU';" 
+          alt="뉴스 img" />
       </div>
       <div class="col-lg-8">
-        <h2 class="content-title">${news.title}</h2>
+        <h2 class="content-title mt-2 mt-lg-0">${news.title}</h2>
         <p class="content-txt">${news.description == null || news.description == ""
           ? "내용없음"
           : news.description.length > 200
