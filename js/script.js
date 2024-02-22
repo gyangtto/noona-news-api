@@ -2,6 +2,10 @@
 const myUrl = 'https://friendly-trifle-ee6c52.netlify.app/top-headlines?country=kr';
 let newsList = [];
 
+const inputArea = document.getElementById('input-area');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
+
 // 메뉴 및 모바일 메뉴 선택
 const menus = document.querySelectorAll('.menus button');
 const mobileMenus = document.querySelectorAll('#menu-list button');
@@ -48,28 +52,49 @@ const getNewsByCategory = async (evt) => {
 
 // 검색 박스 열기/닫기
 const openSearchBox = () => {
-  const inputArea = document.getElementById('input-area');
-
   if (inputArea.style.display === 'flex') {
     inputArea.style.display = 'none';
   } else {
     inputArea.style.display = 'flex';
     document.getElementById('search-icon').style.display = 'none';
-    document.getElementById('search-input').focus();
+    searchInput.focus();
   }
 };
 
 // 검색 입력창 포커스 해제 이벤트 처리
-document.getElementById('search-input').addEventListener('blur', () => {
-  const inputArea = document.getElementById('input-area');
-  // 포커스가 해제되면 입력 영역을 숨기고 검색 아이콘을 다시 표시
-  inputArea.style.display = 'none';
-  document.getElementById('search-icon').style.display = 'block';
+searchInput.addEventListener('blur', () => {
+  getNewsByKeyword();
+
+  setTimeout(() => {
+    const inputArea = document.getElementById('input-area');
+    // 포커스가 해제되면 입력 영역을 숨기고 검색 아이콘을 다시 표시
+    inputArea.style.display = 'none';
+    document.getElementById('search-icon').style.display = 'block';
+    searchInput.value='';
+  },500)
+});
+
+// 검색 버튼 클릭 이벤트 추가
+searchBtn.addEventListener('click', (event) => {
+  // 검색 버튼을 누르면 검색 실행
+  getNewsByKeyword();
+  // 입력 창에서 포커스 해제 방지
+  event.preventDefault();
+});
+
+
+// 검색 입력창에 엔터 키 이벤트 추가
+searchInput.addEventListener('keyup', (event) => {
+  if (event.key === 'Enter') {
+    // 엔터 키를 누르면 검색 실행
+    getNewsByKeyword();
+  }
 });
 
 // 키워드로 뉴스 가져오기
 const getNewsByKeyword = async () => {
-  const keyword = document.getElementById('search-input').value;
+  const keyword = searchInput.value;
+  console.log('keyword', keyword);
   try {
     const url = new URL(`${myUrl}&q=${keyword}`);
     const response = await fetch(url);
@@ -80,6 +105,7 @@ const getNewsByKeyword = async () => {
     console.error('Error fetching news by keyword:', error);
   }
 };
+
 
 // 뉴스 렌더링
 const render = () => {
