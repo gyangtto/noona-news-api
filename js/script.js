@@ -85,7 +85,7 @@ searchInput.addEventListener('blur', () => {
 // 검색 버튼 클릭 이벤트 추가 포커스 해제 이벤트 처리로 인한 onclick 제거 및 click 이벤트 추가
 searchBtn.addEventListener('click', (event) => {
   // 검색 버튼을 누르면 검색 실행
-  handleSearch();
+  handleSearch(); 
 });
 
 
