@@ -1,14 +1,30 @@
 // 초기 설정
 const myUrl = 'https://friendly-trifle-ee6c52.netlify.app/top-headlines?country=kr';
 let newsList = [];
-
-const inputArea = document.getElementById('input-area');
-const searchInput = document.getElementById('search-input');
-const searchBtn = document.getElementById('search-btn');
+// url 초기화 전역변수로 선언
+let url = new URL(`${myUrl}`);
 
 // 메뉴 및 모바일 메뉴 선택
 const menus = document.querySelectorAll('.menus button');
 const mobileMenus = document.querySelectorAll('#menu-list button');
+
+// 검색 선택
+const inputArea = document.getElementById('input-area');
+const searchIcon = document.getElementById('search-icon');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
+
+
+// 중복 코드 방지
+const getNews = async () => {
+  const reponse = await fetch(url);
+  console.log('rrr', reponse);
+  const data = await reponse.json();
+  newsList = data.articles;
+  console.log('ddd', newsList);
+
+  render();
+}
 
 // 모바일 햄버거 메뉴 열기
 const openNav = () => {
@@ -21,16 +37,12 @@ const closeNav = () => {
 };
 
 // 각 메뉴에 클릭 이벤트 추가
-mobileMenus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCategory(evt)));
-menus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCategory(evt)));
+mobileMenus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCategory(evt)))
 
 // 최신 뉴스 가져오기
 const getLatestNews = async () => {
   try {
-    const response = await fetch(myUrl);
-    const data = await response.json();
-    newsList = data.articles;
-    render();
+    getNews();
   } catch (error) {
     console.error('Error fetching latest news:', error);
   }
@@ -40,11 +52,8 @@ const getLatestNews = async () => {
 const getNewsByCategory = async (evt) => {
   const category = evt.target.textContent.toLowerCase();
   try {
-    const url = new URL(`${myUrl}&category=${category}`);
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    render();
+    url = new URL(`${myUrl}&category=${category}`);
+    getNews();
   } catch (error) {
     console.error(`Error fetching news for category '${category}':`, error);
   }
@@ -56,56 +65,65 @@ const openSearchBox = () => {
     inputArea.style.display = 'none';
   } else {
     inputArea.style.display = 'flex';
-    document.getElementById('search-icon').style.display = 'none';
+    searchIcon.style.display = 'none';
     searchInput.focus();
+    // 검색 내용 초기화
+    searchInput.value = '';
   }
 };
 
+
 // 검색 입력창 포커스 해제 이벤트 처리
 searchInput.addEventListener('blur', () => {
-  getNewsByKeyword();
-
   setTimeout(() => {
-    const inputArea = document.getElementById('input-area');
     // 포커스가 해제되면 입력 영역을 숨기고 검색 아이콘을 다시 표시
     inputArea.style.display = 'none';
-    document.getElementById('search-icon').style.display = 'block';
-    searchInput.value='';
-  },500)
+    searchIcon.style.display = 'block';
+  }, 500)
 });
 
-// 검색 버튼 클릭 이벤트 추가
+// 검색 버튼 클릭 이벤트 추가 포커스 해제 이벤트 처리로 인한 onclick 제거 및 click 이벤트 추가
 searchBtn.addEventListener('click', (event) => {
   // 검색 버튼을 누르면 검색 실행
-  getNewsByKeyword();
-  // 입력 창에서 포커스 해제 방지
-  event.preventDefault();
+  handleSearch();
 });
 
 
-// 검색 입력창에 엔터 키 이벤트 추가
+
+// 검색 입력창에 enter 키 이벤트 추가
 searchInput.addEventListener('keyup', (event) => {
   if (event.key === 'Enter') {
     // 엔터 키를 누르면 검색 실행
-    getNewsByKeyword();
+    handleSearch();
   }
 });
+
+// ESC 키를 눌렀을 때 검색창 닫기
+document.addEventListener('keyup', (event) => {
+  if (event.key === 'Escape') {
+    inputArea.style.display = 'none';
+    searchIcon.style.display = 'block';
+  }
+});
+
 
 // 키워드로 뉴스 가져오기
 const getNewsByKeyword = async () => {
   const keyword = searchInput.value;
   console.log('keyword', keyword);
   try {
-    const url = new URL(`${myUrl}&q=${keyword}`);
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    render();
+    url = new URL(`${myUrl}&q=${keyword}`);
+    getNews();
   } catch (error) {
     console.error('Error fetching news by keyword:', error);
   }
 };
 
+// handleSearch() 함수 추가
+const handleSearch = () => {
+  // 검색 이벤트를 통합적으로 처리
+  getNewsByKeyword();
+};
 
 // 뉴스 렌더링
 const render = () => {
@@ -113,9 +131,9 @@ const render = () => {
     <div class="row news mx-auto">
       <div class="news-img col-lg-4 col-12 mx-auto">
         <img class="img-fluid mx-auto col-12" 
-             src="${news.urlToImage}" 
-             onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU';" 
-             alt="뉴스 img">
+          src="${news.urlToImage}" 
+          onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU';" 
+          alt="뉴스 img">
       </div>
       <div class="col-lg-8">
         <h2 class="content-title">${news.title}</h2>
@@ -145,3 +163,8 @@ getLatestNews();
 // published_date는 보통 사용되지 않으므로 publishedAt을 사용하는 것이 더 일반적인 점으로 수정
 
 // 이미지 로딩에 대한 처리에서 onerror 이벤트를 사용하여 이미지 로딩이 실패했을 때 대체 이미지를 표시하도록 수정
+// async () => {} ~  getNews () 함수로 통일
+
+// handleSearch() 함수 추가
+// handleSearch() 함수는 검색 관련 이벤트들을 통합하여 처리하는 역할을 하고, 실제 검색 기능은 getNewsByKeyword() 함수에서 실행 됨
+// ESC 키를 눌렀을 때 검색창 닫기 내용 추가
