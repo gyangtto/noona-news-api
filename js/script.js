@@ -17,24 +17,29 @@ const searchBtn = document.getElementById('search-btn');
 
 // 중복 코드 방지
 const getNews = async () => {
-  try{
-  const reponse = await fetch(url);
-  console.log('rrr', reponse);
-  if (response.status === 200) { // 정상일 경우 렌더링
-    if(data.articles.length===0){
-      throw new Error('No Result for this search');
+  try {
+    const response = await fetch(url);
+    console.log('rrr', response);
+    
+    if (response.status === 200) { // 응답이 성공인지 확인
+      const data = await response.json(); // JSON 데이터를 구문 분석
+
+      if (data.articles.length === 0) {
+        throw new Error('검색 결과가 없습니다.');
+      }
+
+      newsList = data.articles;
+      console.log('ddd', newsList); // 데이터 확인
+      render();
+    } else {
+      throw new Error('뉴스를 가져오는 데 실패했습니다.');
     }
-    newsList = data.articles;
-    console.log('ddd', newsList); // 데이터 정상 여부 확인
-    render();
-  } else {
-    throw new Error(data.message);
+  } catch (error) {
+    // 에러 처리
+    console.error('에러:', error.message);
+    errorRender(error.message);
   }
-} catch (error) {
-  // console.log('error', error.message); // 트라이캐치 함수가 정상여부 확인
-  errorRender(error.message);
 };
-}
 
 // 모바일 햄버거 메뉴 열기
 const openNav = () => {
@@ -129,10 +134,10 @@ const render = () => {
         <img class="img-fluid mx-auto col-12" 
           src="${news.urlToImage}" 
           onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU';" 
-          alt="뉴스 img">
+          alt="뉴스 img" />
       </div>
       <div class="col-lg-8">
-        <h2 class="content-title">${news.title}</h2>
+        <h2 class="content-title mt-2 mt-lg-0">${news.title}</h2>
         <p class="content-txt">${news.description == null || news.description == ""
           ? "내용없음"
           : news.description.length > 200
