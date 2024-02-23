@@ -17,13 +17,23 @@ const searchBtn = document.getElementById('search-btn');
 
 // 중복 코드 방지
 const getNews = async () => {
+  try{
   const reponse = await fetch(url);
   console.log('rrr', reponse);
-  const data = await reponse.json();
-  newsList = data.articles;
-  console.log('ddd', newsList);
-
-  render();
+  if (response.status === 200) { // 정상일 경우 렌더링
+    if(data.articles.length===0){
+      throw new Error('No Result for this search');
+    }
+    newsList = data.articles;
+    console.log('ddd', newsList); // 데이터 정상 여부 확인
+    render();
+  } else {
+    throw new Error(data.message);
+  }
+} catch (error) {
+  // console.log('error', error.message); // 트라이캐치 함수가 정상여부 확인
+  errorRender(error.message);
+};
 }
 
 // 모바일 햄버거 메뉴 열기
@@ -41,22 +51,14 @@ mobileMenus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCat
 
 // 최신 뉴스 가져오기
 const getLatestNews = async () => {
-  try {
     getNews();
-  } catch (error) {
-    console.error('Error fetching latest news:', error);
-  }
 };
 
 // 카테고리별 뉴스 가져오기
 const getNewsByCategory = async (evt) => {
   const category = evt.target.textContent.toLowerCase();
-  try {
     url = new URL(`${myUrl}&category=${category}`);
     getNews();
-  } catch (error) {
-    console.error(`Error fetching news for category '${category}':`, error);
-  }
 };
 
 // 검색 박스 열기/닫기
@@ -88,8 +90,6 @@ searchBtn.addEventListener('click', (event) => {
   handleSearch(); 
 });
 
-
-
 // 검색 입력창에 enter 키 이벤트 추가
 searchInput.addEventListener('keyup', (event) => {
   if (event.key === 'Enter') {
@@ -111,12 +111,8 @@ document.addEventListener('keyup', (event) => {
 const getNewsByKeyword = async () => {
   const keyword = searchInput.value;
   console.log('keyword', keyword);
-  try {
     url = new URL(`${myUrl}&q=${keyword}`);
     getNews();
-  } catch (error) {
-    console.error('Error fetching news by keyword:', error);
-  }
 };
 
 // handleSearch() 함수 추가
@@ -151,6 +147,15 @@ const render = () => {
   document.getElementById('news-board').innerHTML = newsHTML;
 };
 
+const errorRender = (errorMessage) => {
+  const errorHTML = `
+  <div class="alert alert-danger" role="alert">
+  ${errorMessage}
+</div>`;
+
+  document.getElementById('news-board').innerHTML = errorHTML;
+};
+
 // 초기 뉴스 로딩
 getLatestNews();
 
@@ -168,3 +173,6 @@ getLatestNews();
 // handleSearch() 함수 추가
 // handleSearch() 함수는 검색 관련 이벤트들을 통합하여 처리하는 역할을 하고, 실제 검색 기능은 getNewsByKeyword() 함수에서 실행 됨
 // ESC 키를 눌렀을 때 검색창 닫기 내용 추가
+
+// try-catch 위치 getNews() 함수내에서 작동될 수 있도록 수정
+// 에러 화면 내용 추가 구성
