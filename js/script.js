@@ -161,6 +161,52 @@ const errorRender = (errorMessage) => {
   document.getElementById('news-board').innerHTML = errorHTML;
 };
 
+// pagination 구성
+const paginationRender = () => {
+  // totalResults
+  // let totalResults = 0; // 기본값 = 0; 전역 변수 선언
+  // 임의적으로 정해줄 수 있음
+  // page
+  // let page = 1;
+  // pageSize
+  // const pageSize = 10; // 고정 값
+  // groupSize
+  // const groupSize = 5; // 고정 값
+  // 임의적으로 정해줄 수 있음
+  // totalapages
+  const totalPages = Math.ceil(totalResults / pageSize);
+  // pageGroup
+  const pageGroup = Math.ceil(page / groupSize);
+  // lastPage
+  let lastPage = pageGroup * groupSize;
+  // 마지막페이지가 그룹사이즈보다 작을 경우 -> lastpage = totalpage
+  if (lastPage > totalPages) {
+    lastPage = totalPages;
+  }
+  // firstPage
+  const firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1); // 첫번째 페이지그룹이 <=0 일 경우
+
+  // first ~ last Page 그려주기
+  let paginationHTML = `<li class="page-item" onclick="moveToPage(${page - 1})"><a class="page-link">prev</a></li>`
+  for (let i = firstPage; i <= lastPage; i++) {
+    // active 상태 추가
+    paginationHTML += `<li class="page-item ${i === page ? 'active' : ''} onclick='moveToPage(${i})'"><a class="page-link">${i}</a></li>`
+  }
+  paginationHTML += `<li class="page-item" onclick="moveToPage(${page + 1})"><a class="page-link">next</a></li>`;
+  document.querySelector('.pagination').innerHTML = paginationHTML;
+
+  //   <div arialabel='Page navigation exmple'>
+  //   <ul class='pagination'>
+  //   <li class="page-item"><a href="#" class="page-link">prev</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">1</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">2</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">3</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">4</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">5</a></li>
+  //       <li class="page-item"><a href="#" class="page-link">next</a></li>
+  //   </ul>
+  // </div>
+}
 // 초기 뉴스 로딩
 getLatestNews();
 
