@@ -209,3 +209,21 @@ input:autofill:active {
 .pagination {
   cursor: pointer;
 }
+
+#top_btn {
+  background-color: red;
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  display: block;
+  line-height: 50px;
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+}
+
+#top_btn i {
+  font-size: 50px;
+}

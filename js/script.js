@@ -241,6 +241,22 @@ const moveToPage = (pageNum) => {
 // 초기 뉴스 로딩
 getLatestNews();
 
+// top 버튼
+window.addEventListener('scroll', function() {
+  var topButton = document.getElementById('top_btn');
+
+  if (window.scrollY > 100) {
+    topButton.classList.add('on');
+  } else {
+    topButton.classList.remove('on');
+  }
+});
+
+document.getElementById('top_btn').addEventListener('click', function() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+
 // 에러 핸들링 추가
 // try-catch 블록을 사용하여 비동기 함수 (getLatestNews, getNewsByCategory, getNewsByKeyword)에서 발생할 수 있는 에러를 처리
 // 에러가 발생한 경우, 콘솔에 에러 메시지를 출력하고 사용자에게 에러가 발생했음 콘솔 확인
