@@ -14,13 +14,20 @@ const searchIcon = document.getElementById('search-icon');
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 
+// 페이지네이션 값 정하기
+let totalResults = 0; // 기본값 = 0; 전역 변수 선언
+// 임의적으로 정해줄 수 있음
+let page = 1;
+const pageSize = 10; // 고정 값
+const groupSize = 5; // 고정 값
+// 임의적으로 정해줄 수 있음
 
 // 중복 코드 방지
 const getNews = async () => {
   try {
     const response = await fetch(url);
     console.log('rrr', response);
-    
+
     if (response.status === 200) { // 응답이 성공인지 확인
       const data = await response.json(); // JSON 데이터를 구문 분석
 
@@ -56,14 +63,14 @@ mobileMenus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCat
 
 // 최신 뉴스 가져오기
 const getLatestNews = async () => {
-    getNews();
+  getNews();
 };
 
 // 카테고리별 뉴스 가져오기
 const getNewsByCategory = async (evt) => {
   const category = evt.target.textContent.toLowerCase();
-    url = new URL(`${myUrl}&category=${category}`);
-    getNews();
+  url = new URL(`${myUrl}&category=${category}`);
+  getNews();
 };
 
 // 검색 박스 열기/닫기
@@ -92,7 +99,7 @@ searchInput.addEventListener('blur', () => {
 // 검색 버튼 클릭 이벤트 추가 포커스 해제 이벤트 처리로 인한 onclick 제거 및 click 이벤트 추가
 searchBtn.addEventListener('click', (event) => {
   // 검색 버튼을 누르면 검색 실행
-  handleSearch(); 
+  handleSearch();
 });
 
 // 검색 입력창에 enter 키 이벤트 추가
@@ -116,8 +123,8 @@ document.addEventListener('keyup', (event) => {
 const getNewsByKeyword = async () => {
   const keyword = searchInput.value;
   console.log('keyword', keyword);
-    url = new URL(`${myUrl}&q=${keyword}`);
-    getNews();
+  url = new URL(`${myUrl}&q=${keyword}`);
+  getNews();
 };
 
 // handleSearch() 함수 추가
@@ -186,6 +193,14 @@ const paginationRender = () => {
   // firstPage
   const firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1); // 첫번째 페이지그룹이 <=0 일 경우
 
+  // << 제일 처음으로 돌아가기
+  paginationHTML = `<li class="page-item" onclick="pageClick(1)">
+    <a class="page-link" href='#js-bottom'>&lt;&lt;</a>
+    </li>
+    <li class="page-item" onclick="pageClick(${page - 1})">
+    <a class="page-link" href='#js-bottom'>&lt;</a>
+    </li>`;
+
   // first ~ last Page 그려주기
   let paginationHTML = `<li class="page-item" onclick="moveToPage(${page - 1})"><a class="page-link">prev</a></li>`
   for (let i = firstPage; i <= lastPage; i++) {
@@ -207,6 +222,13 @@ const paginationRender = () => {
   //   </ul>
   // </div>
 }
+
+const moveToPage = (pageNum) => {
+  console.log('movetopage', pageNum);
+  page = pageNum;
+  getNews();
+}
+
 // 초기 뉴스 로딩
 getLatestNews();
 
@@ -227,3 +249,5 @@ getLatestNews();
 
 // try-catch 위치 getNews() 함수내에서 작동될 수 있도록 수정
 // 에러 화면 내용 추가 구성
+
+// 페이지네이션 추가 구성
