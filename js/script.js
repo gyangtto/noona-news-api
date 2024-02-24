@@ -14,6 +14,7 @@ const searchIcon = document.getElementById('search-icon');
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 
+// 페이지네이션
 // 페이지네이션 값 정하기
 let totalResults = 0; // 기본값 = 0; 전역 변수 선언
 // 임의적으로 정해줄 수 있음
@@ -26,24 +27,23 @@ const groupSize = 5; // 고정 값
 const getNews = async () => {
   try {
     const response = await fetch(url);
+    const data = await response.json();  // 응답 데이터를 구문 분석
     console.log('rrr', response);
 
-    if (response.status === 200) { // 응답이 성공인지 확인
-      const data = await response.json(); // JSON 데이터를 구문 분석
-
+    if (response.status === 200) { // 정상일 경우 렌더링
       if (data.articles.length === 0) {
         throw new Error('검색 결과가 없습니다.');
       }
-
       newsList = data.articles;
       console.log('ddd', newsList); // 데이터 확인
+      totalResults = data.totalResults; // 데이터의 totalResults 값
       render();
+      paginationRender(); // 페이지네이션 렌더링 추가
     } else {
-      throw new Error('뉴스를 가져오는 데 실패했습니다.');
+      throw new Error(response.statusText);  // 오류 메시지에 적절한 속성을 사용합니다.
     }
   } catch (error) {
-    // 에러 처리
-    console.error('에러:', error.message);
+      // console.log('error', error.message); // 트라이캐치 함수 정상여부 확인
     errorRender(error.message);
   }
 };
@@ -63,14 +63,14 @@ mobileMenus.forEach(menu => menu.addEventListener('click', (evt) => getNewsByCat
 
 // 최신 뉴스 가져오기
 const getLatestNews = async () => {
-  getNews();
+    getNews();
 };
 
 // 카테고리별 뉴스 가져오기
 const getNewsByCategory = async (evt) => {
   const category = evt.target.textContent.toLowerCase();
-  url = new URL(`${myUrl}&category=${category}`);
-  getNews();
+    url = new URL(`${myUrl}&category=${category}`);
+    getNews();
 };
 
 // 검색 박스 열기/닫기
@@ -99,7 +99,7 @@ searchInput.addEventListener('blur', () => {
 // 검색 버튼 클릭 이벤트 추가 포커스 해제 이벤트 처리로 인한 onclick 제거 및 click 이벤트 추가
 searchBtn.addEventListener('click', (event) => {
   // 검색 버튼을 누르면 검색 실행
-  handleSearch();
+  handleSearch(); 
 });
 
 // 검색 입력창에 enter 키 이벤트 추가
@@ -123,8 +123,8 @@ document.addEventListener('keyup', (event) => {
 const getNewsByKeyword = async () => {
   const keyword = searchInput.value;
   console.log('keyword', keyword);
-  url = new URL(`${myUrl}&q=${keyword}`);
-  getNews();
+    url = new URL(`${myUrl}&q=${keyword}`);
+    getNews();
 };
 
 // handleSearch() 함수 추가
@@ -141,10 +141,10 @@ const render = () => {
         <img class="img-fluid mx-auto col-12" 
           src="${news.urlToImage}" 
           onerror="this.onerror=null;this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU';" 
-          alt="뉴스 img" />
+          alt="뉴스 img">
       </div>
       <div class="col-lg-8">
-        <h2 class="content-title mt-2 mt-lg-0">${news.title}</h2>
+        <h2 class="content-title">${news.title}</h2>
         <p class="content-txt">${news.description == null || news.description == ""
           ? "내용없음"
           : news.description.length > 200
@@ -168,7 +168,7 @@ const errorRender = (errorMessage) => {
   document.getElementById('news-board').innerHTML = errorHTML;
 };
 
-// pagination 구성
+
 const paginationRender = () => {
   // totalResults
   // let totalResults = 0; // 기본값 = 0; 전역 변수 선언
@@ -193,22 +193,15 @@ const paginationRender = () => {
   // firstPage
   const firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1); // 첫번째 페이지그룹이 <=0 일 경우
 
-  // << 제일 처음으로 돌아가기
-  paginationHTML = `<li class="page-item" onclick="pageClick(1)">
-    <a class="page-link" href='#js-bottom'>&lt;&lt;</a>
-    </li>
-    <li class="page-item" onclick="pageClick(${page - 1})">
-    <a class="page-link" href='#js-bottom'>&lt;</a>
-    </li>`;
-
   // first ~ last Page 그려주기
-  let paginationHTML = `<li class="page-item" onclick="moveToPage(${page - 1})"><a class="page-link">prev</a></li>`
+  let paginationHTML = `<li class="page-item" onclick="moveToPage(${page - 1})"><a class="page-link">이전</a></li>`;
   for (let i = firstPage; i <= lastPage; i++) {
-    // active 상태 추가
-    paginationHTML += `<li class="page-item ${i === page ? 'active' : ''} onclick='moveToPage(${i})'"><a class="page-link">${i}</a></li>`
+    // 활성 페이지에 대한 클래스 추가
+    paginationHTML += `<li class="page-item ${i === page ? 'active' : ''}" onclick="moveToPage(${i})"><a class="page-link">${i}</a></li>`;
   }
-  paginationHTML += `<li class="page-item" onclick="moveToPage(${page + 1})"><a class="page-link">next</a></li>`;
+  paginationHTML += `<li class="page-item" onclick="moveToPage(${page + 1})"><a class="page-link">다음</a></li>`;
   document.querySelector('.pagination').innerHTML = paginationHTML;
+
 
   //   <div arialabel='Page navigation exmple'>
   //   <ul class='pagination'>
@@ -250,4 +243,10 @@ getLatestNews();
 // try-catch 위치 getNews() 함수내에서 작동될 수 있도록 수정
 // 에러 화면 내용 추가 구성
 
-// 페이지네이션 추가 구성
+// 페이지네이션 추가구성
+// totalResults
+// page
+// pageSize
+// groupSize
+// lastPage
+// firstPage
