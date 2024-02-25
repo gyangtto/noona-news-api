@@ -206,11 +206,8 @@ input:autofill:active {
   font-weight: 800;
 }
 
-.pagination {
-  cursor: pointer;
-}
-
 .page-link{
+  cursor: pointer;
   border: none !important;
 }
 
@@ -220,12 +217,8 @@ input:autofill:active {
   /* background-color: #DEE2E6; */
 }
 
-#pagination-num li.active{
-  border: none !important;
-  outline: none !important;
-}
-
 .active>.page-link, .page-link.active {
+  border: none !important;
   /* border: 2px solid #000 !important; */
   outline: none !important;
   background-color: gray !important;
@@ -242,6 +235,13 @@ input:autofill:active {
   border: none !important;
 }
 
+.page-item.disabled li {
+  cursor: default !important;
+}
+
+.page-item.disabled a {
+  color: #888 !important;
+}
 
 #top_btn {
   background-color: #000;
