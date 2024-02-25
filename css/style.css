@@ -210,20 +210,54 @@ input:autofill:active {
   cursor: pointer;
 }
 
+.page-link{
+  border: none !important;
+}
+
+#pagination-num a{
+  color: #000;
+  background: none;
+  /* background-color: #DEE2E6; */
+}
+
+#pagination-num li.active{
+  border: none !important;
+  outline: none !important;
+}
+
+.active>.page-link, .page-link.active {
+  /* border: 2px solid #000 !important; */
+  outline: none !important;
+  background-color: gray !important;
+  border-radius: 50%;
+}
+
+.active>.page-link, .page-link.active a{
+  font-weight: 800;
+}
+
+#pagination-num a:active, 
+#pagination-num a:focus {
+  outline: none !important;
+  border: none !important;
+}
+
+
 #top_btn {
-  background-color: red;
-  width: 100px;
-  height: 100px;
+  background-color: #000;
+  width: 30px;
+  height: 30px;
   position: fixed;
-  bottom: 0;
-  right: 0;
+  right: 2%;
+  bottom: 2%;
   display: block;
-  line-height: 50px;
+  /* line-height: 30px; */
   border-radius: 50%;
   text-align: center;
   cursor: pointer;
 }
 
 #top_btn i {
-  font-size: 50px;
+  font-size: 30px;
+  color: #fff;
 }
